@@ -1,0 +1,49 @@
+﻿@model TradeTracker.ViewModels.CategoryDTO
+
+<h2 class="page-title">Category Details</h2>
+<hr />
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h5 class="clearfix">
+            <span class="panel-sub-header">Category</span>
+            <a class="fav pull-right link-spacing" href="/Categories/Delete/@Model.Id"><i class="glyphicon glyphicon-trash"></i></a>
+            <a class="fav pull-right link-spacing" href="/Categories/Edit/@Model.Id"><i class="glyphicon glyphicon-pencil"></i></a>
+            <a class="fav pull-right link-spacing" href="/Categories/"><i class="glyphicon glyphicon-arrow-left"></i></a>
+        </h5>
+    </div>
+    <div class="panel-body">
+        <div>
+            <span class="font-weight-bold">Name:</span>
+            @Html.DisplayFor(modelItem => modelItem.Name)
+        </div>
+        <span class="font-weight-bold">Products:</span>
+        @if (Model.Products.Count() > 0)
+        {
+            for (int i = 0; i < Model.Products.Count(); i++)
+            {
+                string text;
+                if (i + 1 == Model.Products.Count())
+                {
+                    text = ".";
+                }
+                else if (i == Model.Products.Count() - 2)
+                {
+                    text = ", and ";
+                }
+                else
+                {
+                    text = ", ";
+                }
+                <a class="fav" href="/Products/Details/@Model.Products.ElementAt(i).Id">
+                    @Model.Products.ElementAt(i).Name
+                </a>@text
+            }
+        }
+        else
+        {
+            @("No Products have the category " + Model.Name)
+        }
+
+    </div>
+</div>

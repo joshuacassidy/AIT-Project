@@ -1,0 +1,43 @@
+﻿@model TradeTracker.Models.IndexViewModel
+@{
+    ViewBag.Title = "Manage";
+}
+
+<h2 class="page-title">@ViewBag.Title</h2>
+<p class="page-title text-success">@ViewBag.StatusMessage</p>
+<hr />
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h5 class="clearfix">
+            <span class="panel-sub-header">Settings</span>
+        </h5>
+    </div>
+    <div class="panel-body">
+        <div>
+            <span class="font-weight-bold">Member since:</span>
+           @Model.DateAdded
+        </div>
+        <div>
+            <span class="font-weight-bold">Password:</span>
+            [
+            @if (Model.HasPassword)
+            {
+                @Html.ActionLink("Change your password", "ChangePassword")
+            }
+            else
+            {
+                @Html.ActionLink("Create", "SetPassword")
+            }
+            ]
+        </div>
+
+        <div>
+            <span class="font-weight-bold">External Logins:</span>
+            @Model.Logins.Count [
+            @Html.ActionLink("Manage", "ManageLogins") ]
+        </div>
+
+
+    </div>
+</div>

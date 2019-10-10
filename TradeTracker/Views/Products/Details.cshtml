@@ -1,0 +1,63 @@
+﻿@model TradeTracker.ViewModels.ProductDTO
+
+<h2 class="page-title">Product Details</h2>
+<hr />
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h5 class="clearfix">
+            <span class="panel-sub-header">Product</span>
+            <a class="fav pull-right link-spacing" href="/Products/Delete/@Model.Id"><i class="glyphicon glyphicon-trash"></i></a>
+            <a class="fav pull-right link-spacing" href="/Products/Edit/@Model.Id"><i class="glyphicon glyphicon-pencil"></i></a>
+            <a class="fav pull-right link-spacing" href="/Products/"><i class="glyphicon glyphicon-arrow-left"></i></a>
+        </h5>
+    </div>
+    <div class="panel-body">
+        <div>
+            <span class="font-weight-bold">Name:</span>
+            @Html.DisplayFor(modelItem => modelItem.Name)
+        </div>
+        <div>
+            <span class="font-weight-bold">Price: </span>
+            @Html.DisplayFor(modelItem => modelItem.Price)
+        </div>
+        <div>
+            <span class="font-weight-bold">Category: </span>
+            @Html.DisplayFor(modelItem => modelItem.Category.Name)
+        </div>
+
+        <div>
+            <span class="font-weight-bold">Status: </span>
+            @Html.DisplayFor(modelItem => modelItem.Status.Name)
+        </div>
+
+        <span class="font-weight-bold">Clients:</span>
+        @if (Model.Clients.Count() > 0)
+        {
+            for (int i = 0; i < Model.Clients.Count(); i++)
+            {
+                string text;
+                if (i + 1 == Model.Clients.Count())
+                {
+                    text = ".";
+                }
+                else if (i == Model.Clients.Count() - 2)
+                {
+                    text = ", and ";
+                }
+                else
+                {
+                    text = ", ";
+                }
+                <a class="fav" href="/Products/Details/@Model.Clients.ElementAt(i).Id">
+                    @Model.Clients.ElementAt(i).Name
+                </a>@text
+            }
+        }
+        else
+        {
+            @(Model.Name + " are not currently demanded by any clients.")
+        }
+
+    </div>
+</div>

@@ -1,0 +1,158 @@
+﻿@model TradeTracker.ViewModels.StatisticsDTO
+
+@{
+    ViewBag.Title = "Statistics ";
+}
+<h2 class="page-title">@ViewBag.Title</h2>
+<hr />
+<div id="charts"></div>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+<div id="container" style="min-width: 310px; height: 350px; max-width: 600px; margin: 0 auto"></div>
+<!--[if lt IE 9]>
+    <script src="https://code.highcharts.com/modules/oldie.js"></script>
+<![endif]-->
+
+
+<script>
+    var rawCategoriesJson = @Html.Raw(Json.Encode(@Model.Categories));
+    var categoriesJSON = []
+    for (var i = 0; i < rawCategoriesJson.length; i++) {
+        categoriesJSON.push({ name: rawCategoriesJson[i].Name, y: rawCategoriesJson[i].Products.length })
+    }
+
+    var rawStatusJson = @Html.Raw(Json.Encode(@Model.Status));
+    var statusJson = []
+    for (var i = 0; i < rawStatusJson.length; i++) {
+        statusJson.push({ name: rawStatusJson[i].Name, y: rawStatusJson[i].Products.length })
+    }
+
+    var rawClientsJson = @Html.Raw(Json.Encode(@Model.Clients));
+    var clientsJson = []
+    for (var i = 0; i < rawClientsJson.length; i++) {
+        clientsJson.push({ name: rawClientsJson[i].Name, y: rawClientsJson[i].Products.length })
+    }
+
+    makeChart('categories', categoriesJSON, "Products that belong to specific categories")
+    makeChart('status', statusJson, "The status of products")
+    makeChart('clients', clientsJson, "Clients demanding products")
+
+    function makeChart(name, data, chartTitle) {
+
+        $('<div id="' + name +'" ></div>').appendTo('#charts');
+        Highcharts.chart(name, {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: chartTitle
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: name,
+                colorByPoint: true,
+                data: data
+            }]
+        });
+    }
+
+
+    /*
+    for (let i = 0; i < 2; i++) {
+        $('<div id="' + i + '" ></div>').appendTo('#charts');
+        // Build the chart
+        Highcharts.chart(i + '', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Browser market shares in January, 2018'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: "a",
+                        y: 0
+                    },
+                    {
+                        name: "b",
+                        y: 1
+                    },
+                    {
+                        name: "c",
+                        y: 2
+                    },
+                    {
+                        name: "d",
+                        y: 3
+                    },
+                    {
+                        name: "d",
+                        y: 5
+                    },
+                    {
+                        name: "e",
+                        y: 8
+                    },
+                    {
+                        name: "f",
+                        y: 13
+                    },
+                    {
+                        name: "g",
+                        y: 21
+                    },
+                    {
+                        name: "h",
+                        y: 34
+                    },
+
+                ]
+            }]
+        });
+    }
+    */
+
+</script>

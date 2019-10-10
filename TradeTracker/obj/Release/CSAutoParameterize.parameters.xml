@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="TradeContext-Web.config Connection String" description="TradeContext Connection String used in web.config by the application to access the database." defaultValue="Data Source=(LocalDb)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\aspnet-TradeTracker-20181220064233.mdf;Initial Catalog=aspnet-TradeTracker-20181220064233;Integrated Security=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="c:\\users\\josh\\documents\\visual\ studio\ 2017\\Projects\\TradeTracker\\TradeTracker\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TradeContext']/@connectionString" />
+  </parameter>
+</parameters>

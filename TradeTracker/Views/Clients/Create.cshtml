@@ -1,0 +1,68 @@
+﻿@model TradeTracker.ViewModels.CreateClientDTO
+
+<h2 class="page-title">Create Client</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <hr />
+
+
+    <div class="form-custom">
+        <div class="form-group">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control form-spacing" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Email, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control form-spacing" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Phone, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.Phone, new { @class = "form-control form-spacing" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9 form-spacing">
+                <div>
+                    @{
+                        int cnt = 0;
+                        List<TradeTracker.ViewModels.DemandedProductsData> products = Model.Products;
+
+                        foreach (var product in products)
+                        {
+                            if (cnt++ % 4 == 0)
+                            {
+                            @:</div><div>
+                            }
+                            <input type="checkbox"
+                                   name="selectedProducts"
+                                   value="@product.ProductID"
+                                   @(Html.Raw(product.Requested ? "checked=\"checked\"" : "")) />
+                                    @product.Name
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-offset-3 col-md-9">
+            <input type="submit" class="btn btn-success button-custom form-spacing" value="Create" />
+        </div>
+    </div>
+
+                        }

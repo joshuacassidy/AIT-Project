@@ -1,0 +1,83 @@
+﻿@model TradeTracker.Models.Product
+
+<h2 class="page-title">Delete Product</h2>
+<hr />
+
+<div class="form-custom">
+    <div class="form-group text-center">
+        <h4>
+            <span class="font-weight-bold">
+                @Html.DisplayNameFor(model => model.Name):
+            </span>
+            <span>
+                @Html.DisplayFor(
+                    model => model.Name,
+                    new
+                    {
+                        @class = "form-control form-spacing"
+                    }
+                )
+            </span>
+        </h4>
+        <h4>
+            <span class="font-weight-bold">
+                @Html.DisplayNameFor(model => model.Price):
+            </span>
+            <span>
+                @Html.DisplayFor(
+                         model => model.Price,
+                         new
+                         {
+                             @class = "form-control form-spacing"
+                         }
+                     )
+            </span>
+        </h4>
+        <h4>
+            <span class="font-weight-bold">
+                @Html.DisplayNameFor(model => model.Category.Name):
+            </span>
+            <span>
+                @Html.DisplayFor(
+                 model => model.Category.Name,
+                 new
+                 {
+                     @class = "form-control form-spacing"
+                 }
+             )
+            </span>
+        </h4>
+        <h4>
+            <span class="font-weight-bold">
+                @Html.DisplayNameFor(model => model.Status.Name):
+            </span>
+            <span>
+                @Html.DisplayFor(
+                 model => model.Status.Name,
+                 new
+                 {
+                     @class = "form-control form-spacing"
+                 }
+             )
+            </span>
+        </h4>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-custom">
+        <div class="home-title">
+            <input type="submit" class="search-width operation-button btn btn-success form-spacing" value="Delete" />
+        </div>
+    </div>
+
+}
+<div class="form-custom">
+    <div class="home-title">
+        <a href="/Products" class="search-width operation-button btn btn-danger form-spacing">
+            Back to Products
+        </a>
+    </div>
+</div>

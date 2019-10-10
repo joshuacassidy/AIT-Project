@@ -1,0 +1,82 @@
+﻿@model TradeTracker.ViewModels.EditClientDTO
+
+<h2 class="page-title">Edit Client</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="form-custom">
+        <div class="form-group">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control form-spacing" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control form-spacing" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "col-md-3 control-label" })
+            <div class="col-md-9">
+                @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control form-spacing" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9 form-spacing">
+                <div>
+                    @{
+                        int cnt = 0;
+                        List<TradeTracker.ViewModels.DemandedProductsData> products = Model.Products;
+
+                        foreach (var product in products)
+                        {
+                            if (cnt++ % 2 == 0)
+                            {
+                                @:</div><div>
+                                }
+                            @:
+                            <input type="checkbox"
+                                   name="selectedProducts"
+                                   value="@product.ProductID"
+                                   @(Html.Raw(product.Requested ? "checked=\"checked\"" : "")) />
+                                    @product.Name
+
+                        }
+                        @:
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-offset-3 col-md-9">
+            <input type="submit" class="btn btn-success button-custom form-spacing" value="Edit" />
+        </div>
+    </div>
+
+    @Html.HiddenFor(m => m.UserId)
+                        }
+
+<div class="form-custom">
+
+    <div class="col-md-offset-3 col-md-9">
+        <a href="/Clients" class="btn btn-danger button-custom form-spacing">Back to Clients</a>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

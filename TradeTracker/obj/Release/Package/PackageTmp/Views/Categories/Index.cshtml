@@ -1,0 +1,230 @@
+﻿@model IEnumerable<TradeTracker.ViewModels.CategoryDTO>
+
+
+
+
+<h2 class="page-title">Categories</h2>
+<hr />
+
+
+<div class="container">
+
+    <div class="panel panel-primary">
+        <div class="panel-heading panel-header">
+            <h4 class="clearfix">
+                <span class="header-title">Categories</span>
+                <a class="fav pull-right link-spacing" href="/Categories/Create"><i class="glyphicon glyphicon-plus"></i></a>
+
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="input-group full-width">
+                <span class="input-group-addon search-icon searchbar-height"><i class="glyphicon glyphicon-search "></i></span>
+                <input type="text" id="search-text" class="search-width unset-width form-control searchbar-height" placeholder="Search for a category" onkeypress="onEnter(event)" />
+                <span id="clear"></span>
+            </div>
+        </div>
+        <div class="container" id="categories">
+            @foreach (var item in Model)
+            {
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5 class="clearfix">
+                            <span class="panel-sub-header">Category</span>
+                            <a class="fav pull-right link-spacing" href="/Categories/Delete/@item.Id"><i class="glyphicon glyphicon-trash"></i></a>
+                            <a class="fav pull-right link-spacing" href="/Categories/Edit/@item.Id"><i class="glyphicon glyphicon-pencil"></i></a>
+                            <a class="fav pull-right link-spacing" href="/Categories/Details/@item.Id"><i class="glyphicon glyphicon-info-sign"></i></a>
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <span class="font-weight-bold">Category Name:</span>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </div>
+                        <span class="font-weight-bold">Products:</span>
+                        @if (item.Products.Count() > 0)
+                        {
+                            for (int i = 0; i < item.Products.Count(); i++)
+                            {
+                                string text;
+                                if (i + 1 == item.Products.Count())
+                                {
+                                    text = ".";
+                                }
+                                else if (i == item.Products.Count() - 2)
+                                {
+                                    text = ", and ";
+                                }
+                                else
+                                {
+                                    text = ", ";
+                                }
+                                <a class="fav" href="/Products/Details/@item.Products.ElementAt(i).Id">
+                                    @item.Products.ElementAt(i).Name
+                                </a>@text
+                            }
+                        }
+                        else
+                        {
+                            @("No Products have the category " + item.Name + ".")
+                        }
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function onEnter(e) {
+        if (e.keyCode == 13 || e.key == "Enter") {
+            search();
+        }
+    }
+
+    function search() {
+        var query = $("#search-text").val();
+        $.ajax({
+            type: 'GET',
+            url: '/api/categories/' + query,
+            data: { name: query },
+            dataType: 'json',
+            success: function (resp) {
+                var results = '';
+                for (var i = 0; i < resp.length; i++) {
+                    results +=
+                        '<div class="panel panel-primary">' +
+                            '<div class="panel-heading">' +
+                                '<h5 class="clearfix">' +
+                                    '<span class="panel-sub-header">Category</span>' +
+                                    '<a class="fav pull-right link-spacing" href="/Categories/Delete/' + resp[i].Id + '">' +
+                                        '<i class="glyphicon glyphicon-trash" ></i >' +
+                                    '</a>' +
+                                    '<a class="fav pull-right link-spacing" href="/Categories/Edit/' + resp[i].Id + '">' +
+                                        '<i class="glyphicon glyphicon-pencil"></i>' +
+                                    '</a>' +
+                                    '<a class="fav pull-right link-spacing" href="/Categories/Details/' + resp[i].Id + '">' +
+                                        '<i class="glyphicon glyphicon-info-sign"></i>' +
+                                    '</a>' +
+                                '</h5>' +
+                            '</div>' +
+                            '<div class="panel-body">' +
+                                '<div>' +
+                                    '<span class="font-weight-bold">Name:</span>' +
+                                    resp[i].Name + 
+                                '</div>' +
+                                '<span class="font-weight-bold">Products:</span>';
+                                    if (resp[i].Products.length > 0) {
+                                        for (var j = 0; j < resp[i].Products.length; j++) {
+                                            var text;
+                                            if (j + 1 == resp[i].Products.length) {
+                                                text = ".";
+                                            } else if (j == resp[i].Products.length - 2) {
+                                                text = ", and ";
+                                            } else {
+                                                text = ", ";
+                                            }
+                                            results +=
+                                            '<a class="fav" href="/Products/Details/' + resp[i].Products[j].Id + '">' +
+                                                resp[i].Products[j].Name +
+                                            '</a >' + text
+
+                                        }
+                                    } else {
+                                        results += "No Products have the category " + resp[i].Name
+                                    }
+
+                    results+= '</div>' +
+                            '</div>'
+
+                }
+
+                console.log(resp);
+                document.getElementById("categories").innerHTML = results;
+
+            }
+        }).fail(function (err) {
+            // show the not found message fix the api search up
+            console.log(err)
+            console.log(err.statusText)
+        });
+        $("#search-text").after('');
+        $("#search-text").after('<span id="clear" onclick="clearSearch()" class="input-group-addon clear-icon searchbar-height"><i class="glyphicon glyphicon-trash "></i></span>');
+
+    }
+
+    function clearSearch() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/api/categories/',
+            dataType: 'json',
+            success: function (resp) {
+                var results = '';
+
+                for (var i = 0; i < resp.length; i++) {
+                    results +=
+                        '<div class="panel panel-primary">' +
+                        '<div class="panel-heading">' +
+                        '<h5 class="clearfix">' +
+                        '<span class="panel-sub-header">Category</span>' +
+                        '<a class="fav pull-right link-spacing" href="/Categories/Delete/' + resp[i].Id + '">' +
+                        '<i class="glyphicon glyphicon-trash" ></i >' +
+                        '</a>' +
+                        '<a class="fav pull-right link-spacing" href="/Categories/Edit/' + resp[i].Id + '">' +
+                        '<i class="glyphicon glyphicon-pencil"></i>' +
+                        '</a>' +
+                        '<a class="fav pull-right link-spacing" href="/Categories/Details/' + resp[i].Id + '">' +
+                        '<i class="glyphicon glyphicon-info-sign"></i>' +
+                        '</a>' +
+                        '</h5>' +
+                        '</div>' +
+                        '<div class="panel-body">' +
+                        '<div>' +
+                        '<span class="font-weight-bold">Name:</span> ' +
+                        resp[i].Name + 
+                        '</div>' +
+                        '<span class="font-weight-bold">Products:</span>';
+                    if (resp[i].Products.length > 0) {
+                        for (var j = 0; j < resp[i].Products.length; j++) {
+                            var text;
+                            if (j + 1 == resp[i].Products.length) {
+                                text = ".";
+                            } else if (j == resp[i].Products.length - 2) {
+                                text = ", and ";
+                            } else {
+                                text = ", ";
+                            }
+                            results +=
+                                '<a class="fav" href="/Products/Details/' + resp[i].Products[j].Id + '"> ' +
+                                resp[i].Products[j].Name +
+                                '</a >' + text
+
+                        }
+                        console.log(resp)
+
+                    } else {
+                        results += "No Products have the category " + resp[i].Name
+                    }
+
+                    results += '</div>' +
+                        '</div>'
+
+                }
+
+
+                document.getElementById("categories").innerHTML = results;
+                $("#clear").remove();
+                $("#search-text").val('');
+            }
+        }).fail(function (err) {
+            // show the not found message fix the api search up
+            console.log(err)
+        });
+
+    }
+
+</script>

@@ -1,0 +1,280 @@
+﻿@model IEnumerable<TradeTracker.ViewModels.ProductDTO>
+
+<h2 class="page-title">Products</h2>
+<hr />
+
+<div class="container">
+
+    <div class="panel panel-primary">
+        <div class="panel-heading panel-header">
+            <h4 class="clearfix">
+                <span class="header-title">Products</span>
+                <a class="fav pull-right link-spacing" href="/Products/Create"><i class="glyphicon glyphicon-plus"></i></a>
+
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="input-group full-width">
+                <span class="input-group-addon search-icon searchbar-height"><i class="glyphicon glyphicon-search "></i></span>
+                <input type="text" id="search-text" class="search-width unset-width form-control searchbar-height" placeholder="Search for a product" onkeypress="onEnter(event)" />
+                <span id="clear"></span>
+            </div>
+        </div>
+        <div class="container" id="products">
+            @foreach (var item in Model)
+            {
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h5 class="clearfix">
+                            <span class="panel-sub-header">Product</span>
+                            <a class="fav pull-right link-spacing" href="/Products/Delete/@item.Id"><i class="glyphicon glyphicon-trash"></i></a>
+                            <a class="fav pull-right link-spacing" href="/Products/Edit/@item.Id"><i class="glyphicon glyphicon-pencil"></i></a>
+                            <a class="fav pull-right link-spacing" href="/Products/Details/@item.Id"><i class="glyphicon glyphicon-info-sign"></i></a>
+                        </h5>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <span class="font-weight-bold">Product Name: </span>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </div>
+                        <div>
+                            <span class="font-weight-bold">Price: </span>
+                            @Html.DisplayFor(modelItem => item.Price)
+                        </div>
+                        <div>
+                            <span class="font-weight-bold">Category: </span>
+                            <a class="fav" href="/Categories/Details/@item.Category.Id">@Html.DisplayFor(modelItem => item.Category.Name)</a>
+
+                        </div>
+                        <div>
+                            <span class="font-weight-bold">Status: </span>
+                            <a class="fav" href="/Status/Details/@item.Status.Id">@Html.DisplayFor(modelItem => item.Status.Name)</a>
+                        </div>
+
+                        <span class="font-weight-bold">Clients Demanding: </span>
+                        @if (item.Clients.Count() > 0)
+                        {
+                            for (int i = 0; i < item.Clients.Count(); i++)
+                            {
+                                string text;
+                                if (i + 1 == item.Clients.Count())
+                                {
+                                    text = ".";
+                                }
+                                else if (i == item.Clients.Count() - 2)
+                                {
+                                    text = ", and ";
+                                }
+                                else
+                                {
+                                    text = ", ";
+                                }
+                                <a class="fav" href="/Clients/Details/@item.Clients.ElementAt(i).Id">
+                                    @item.Clients.ElementAt(i).Name
+                                </a>@text
+                            }
+                        }
+                        else
+                        {
+                            @(item.Name + " are not currently demanded by any clients.")
+                        }
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function onEnter(e) {
+        if (e.keyCode == 13 || e.key == "Enter") {
+            search();
+        }
+    }
+
+    function search() {
+        var query = $("#search-text").val();
+        $.ajax({
+            type: 'GET',
+            url: '/api/products/' + query,
+            data: { name: query },
+            dataType: 'json',
+            success: function (resp) {
+                console.log(resp)
+                var results = '';
+                console.log(resp)
+                for (var i = 0; i < resp.length; i++) {
+
+                    results +=
+                        '<div class="panel panel-primary">' +
+                            '<div class="panel-heading">' +
+                                '<h5 class="clearfix">' +
+                                    '<span class="panel-sub-header">Product</span>' +
+                                    '<a class="fav pull-right link-spacing" href="/Products/Delete/' + resp[i].Id + '">' +
+                                        '<i class="glyphicon glyphicon-trash" ></i >' +
+                                    '</a>' +
+                                    '<a class="fav pull-right link-spacing" href="/Products/Edit/' + resp[i].Id + '">' +
+                                        '<i class="glyphicon glyphicon-pencil"></i>' +
+                                    '</a>' +
+                                    '<a class="fav pull-right link-spacing" href="/Products/Details/' + resp[i].Id + '">' +
+                                        '<i class="glyphicon glyphicon-info-sign"></i>' +
+                                    '</a>' +
+                                '</h5>' +
+                            '</div>' +
+                            '<div class="panel-body">' +
+                                '<div>' +
+                                    '<span class="font-weight-bold">Product Name:</span> ' +
+                                    resp[i].Name +
+                                '</div>';
+                    results += '<div>';
+                    results +=
+                        '<span class="font-weight-bold">Price:</span> ' + ((resp[i].Price).toFixed(2))
+                    results += '</div>';
+
+                    results += '<div>';
+                        results +=
+                            '<span class="font-weight-bold">Category:</span> ' + resp[i].Category.Name
+                    results += '</div>';
+
+                    results += '<div>';
+                    results +=
+                        '<span class="font-weight-bold">Status: </span> ' + resp[i].Status.Name
+                    results += '</div>';
+
+                    results += '<div>';
+
+
+
+                    results += '<span class="font-weight-bold">Clients Demanding:</span> ';
+                    if (resp[i].Clients.length > 0) {
+                        for (var j = 0; j < resp[i].Clients.length; j++) {
+                            var text;
+                            if (j + 1 == resp[i].Clients.length) {
+                                text = ".";
+                            } else if (j == resp[i].Clients.length - 2) {
+                                text = ", and ";
+                            } else {
+                                text = ", ";
+                            }
+                            results +=
+                                '<a class="fav" href="/Products/Details/' + resp[i].Clients[j].Id + '">' +
+                            resp[i].Clients[j].Name +
+                                '</a >' + text
+
+                        }
+                    } else {
+                        results += resp[i].Name + " is currently not looking for any products."
+                    }
+
+                    results += '</div>' +
+                        '</div>' +
+                        '</div>'
+
+                }
+
+                console.log(resp);
+                document.getElementById("products").innerHTML = results;
+
+            }
+        }).fail(function (err) {
+            // show the not found message fix the api search up
+            console.log(err)
+            console.log(err.statusText)
+        });
+        $("#search-text").after('');
+        $("#search-text").after('<span id="clear" onclick="clearSearch()" class="input-group-addon clear-icon searchbar-height"><i class="glyphicon glyphicon-trash "></i></span>');
+
+    }
+
+    function clearSearch() {
+        $.ajax({
+            type: 'GET',
+            url: '/api/products/',
+            dataType: 'json',
+            success: function (resp) {
+                console.log(resp)
+                var results = '';
+                for (var i = 0; i < resp.length; i++) {
+
+                    results +=
+                        '<div class="panel panel-primary">' +
+                        '<div class="panel-heading">' +
+                        '<h5 class="clearfix">' +
+                        '<span class="panel-sub-header">Product</span>' +
+                        '<a class="fav pull-right link-spacing" href="/Products/Delete/' + resp[i].Id + '">' +
+                        '<i class="glyphicon glyphicon-trash" ></i >' +
+                        '</a>' +
+                        '<a class="fav pull-right link-spacing" href="/Products/Edit/' + resp[i].Id + '">' +
+                        '<i class="glyphicon glyphicon-pencil"></i>' +
+                        '</a>' +
+                        '<a class="fav pull-right link-spacing" href="/Products/Details/' + resp[i].Id + '">' +
+                        '<i class="glyphicon glyphicon-info-sign"></i>' +
+                        '</a>' +
+                        '</h5>' +
+                        '</div>' +
+                        '<div class="panel-body">' +
+                        '<div>' +
+                        '<span class="font-weight-bold">Product Name:</span> ' +
+                        resp[i].Name +
+                        '</div>';
+                    results += '<div>';
+                    results +=
+                        '<span class="font-weight-bold">Price:</span> ' + (resp[i].Price).toFixed(2)
+                    results += '</div>';
+
+                    results += '<div>';
+                    results +=
+                        '<span class="font-weight-bold">Category:</span> ' + resp[i].Category.Name
+                    results += '</div>';
+
+                    results += '<div>';
+                    results +=
+                        '<span class="font-weight-bold">Status: </span> ' + resp[i].Status.Name
+                    results += '</div>';
+
+                    results += '<div>';
+
+                    results += '<span class="font-weight-bold">Clients Demanding:</span> ';
+                    if (resp[i].Clients.length > 0) {
+                        for (var j = 0; j < resp[i].Clients.length; j++) {
+                            var text;
+                            if (j + 1 == resp[i].Clients.length) {
+                                text = ".";
+                            } else if (j == resp[i].Clients.length - 2) {
+                                text = ", and ";
+                            } else {
+                                text = ", ";
+                            }
+                            results +=
+                                '<a class="fav" href="/Products/Details/' + resp[i].Clients[j].Id + '">' +
+                                resp[i].Clients[j].Name +
+                                '</a >' + text
+
+                        }
+                    } else {
+                        results += resp[i].Name + " is currently not looking for any products."
+                    }
+
+                    results += '</div>' +
+                        '</div>' +
+                        '</div>'
+
+                }
+
+                document.getElementById("products").innerHTML = results;
+                $("#clear").remove();
+                $("#search-text").val('');
+            }
+        }).fail(function (err) {
+            // show the not found message fix the api search up
+            console.log(err)
+        });
+
+    }
+
+</script>
+
+
+
